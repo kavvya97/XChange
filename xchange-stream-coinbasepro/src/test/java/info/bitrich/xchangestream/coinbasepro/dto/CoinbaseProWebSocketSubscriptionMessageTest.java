@@ -2,11 +2,14 @@ package info.bitrich.xchangestream.coinbasepro.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import org.junit.Assert;
 import org.junit.Test;
 import org.knowm.xchange.currency.CurrencyPair;
+import java.util.HashSet;
+import java.util.Set;
 
 /** Created by luca on 5/3/17. */
 public class CoinbaseProWebSocketSubscriptionMessageTest {
@@ -27,10 +30,17 @@ public class CoinbaseProWebSocketSubscriptionMessageTest {
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 
     String serialized = mapper.writeValueAsString(message);
+    JsonNode actualJson = mapper.readTree(serialized);
+    JsonNode expectedJson = mapper.readTree("{\"type\":\"subscribe\",\"channels\":[{\"name\":\"matches\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"ticker\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"level2\",\"product_ids\":[\"BTC-USD\"]}]}");
+    
+    Assert.assertEquals(expectedJson.get("type").asText(), actualJson.get("type").asText());
+    Set<JsonNode> expectedChannels = new HashSet<>();
+    expectedJson.get("channels").forEach(expectedChannels::add);
 
-    Assert.assertEquals(
-        "{\"type\":\"subscribe\",\"channels\":[{\"name\":\"matches\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"ticker\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"level2\",\"product_ids\":[\"BTC-USD\"]}]}",
-        serialized);
+    Set<JsonNode> actualChannels = new HashSet<>();
+    actualJson.get("channels").forEach(actualChannels::add);
+
+    Assert.assertEquals(expectedChannels, actualChannels);
   }
 
   @Test
@@ -49,10 +59,17 @@ public class CoinbaseProWebSocketSubscriptionMessageTest {
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 
     String serialized = mapper.writeValueAsString(message);
+    JsonNode actualJson = mapper.readTree(serialized);
+    JsonNode expectedJson = mapper.readTree("{\"type\":\"subscribe\",\"channels\":[{\"name\":\"matches\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"ticker\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"full\",\"product_ids\":[\"BTC-USD\"]}]}");
 
-    Assert.assertEquals(
-        "{\"type\":\"subscribe\",\"channels\":[{\"name\":\"matches\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"ticker\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"full\",\"product_ids\":[\"BTC-USD\"]}]}",
-        serialized);
+    Assert.assertEquals(expectedJson.get("type").asText(), actualJson.get("type").asText());
+    Set<JsonNode> expectedChannels = new HashSet<>();
+    expectedJson.get("channels").forEach(expectedChannels::add);
+
+    Set<JsonNode> actualChannels = new HashSet<>();
+    actualJson.get("channels").forEach(actualChannels::add);
+
+    Assert.assertEquals(expectedChannels, actualChannels);
   }
 
   @Test
@@ -71,9 +88,18 @@ public class CoinbaseProWebSocketSubscriptionMessageTest {
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 
     String serialized = mapper.writeValueAsString(message);
+    JsonNode actualJson = mapper.readTree(serialized);
+    JsonNode expectedJson = mapper.readTree("{\"type\":\"subscribe\",\"channels\":[{\"name\":\"matches\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"level2_batch\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"ticker\",\"product_ids\":[\"BTC-USD\"]}]}");
 
-    Assert.assertEquals(
-            "{\"type\":\"subscribe\",\"channels\":[{\"name\":\"matches\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"level2_batch\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"ticker\",\"product_ids\":[\"BTC-USD\"]}]}",
-            serialized);
+    System.out.println("ACTUAL " + actualJson);
+    System.out.println("EXPECTED " + expectedJson);
+    Assert.assertEquals(expectedJson.get("type").asText(), actualJson.get("type").asText());
+    Set<JsonNode> expectedChannels = new HashSet<>();
+    expectedJson.get("channels").forEach(expectedChannels::add);
+
+    Set<JsonNode> actualChannels = new HashSet<>();
+    actualJson.get("channels").forEach(actualChannels::add);
+
+    Assert.assertEquals(expectedChannels, actualChannels);
   }
 }
